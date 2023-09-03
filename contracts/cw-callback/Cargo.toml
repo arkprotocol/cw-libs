@@ -1,0 +1,29 @@
+[package]
+name = "cw-callback"
+description = "CosmWasm callback contract"
+version       = { workspace = true }
+license     = { workspace = true }
+authors     = { workspace = true }
+edition     = { workspace = true }
+homepage    = { workspace = true }
+repository  = { workspace = true }
+keywords    = { workspace = true }
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+# use library feature to disable all instantiate/execute/query exports
+library = []
+
+[dependencies]
+cosmwasm-std = { workspace = true }
+cosmwasm-schema = { workspace = true }
+cw-storage-plus = { workspace = true }
+schemars = { workspace = true }
+serde = { workspace = true }
+sylvia = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+sylvia = { workspace = true, features = ["mt"] }
