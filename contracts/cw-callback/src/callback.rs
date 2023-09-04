@@ -1,27 +1,24 @@
-use cosmwasm_std::{Response, StdError, StdResult};
-use sylvia::{
-    interface,
-    types::{ExecCtx, QueryCtx},
-};
+use cosmwasm_std::{Binary, Coin, Empty, Response, StdResult, SubMsg, WasmMsg};
 
-use crate::state::CallbackMsg;
+pub const REPLY_ID_MSG: u64 = 1;
 
-#[interface]
-pub trait Callback {
-    type Error: From<StdError>;
-
-    #[msg(exec)]
-    fn callback(
-        &self,
-        ctx: ExecCtx,
-        msg: Box<crate::contract::ExecMsg>,
-        callback: CallbackMsg,
-    ) -> StdResult<Response>;
-
-    #[msg(query)]
-    fn get_callback(
-        &self,
-        ctx: QueryCtx,
-        sender: String,
-    ) -> StdResult<Option<crate::contract::ExecMsg>>;
+pub fn callback(
+    contract_addr: String,
+    contract_msg: Binary,
+    contract_funds: Vec<Coin>,
+    callback_addr: String,
+    callback_msg: Binary,
+    callback_funds: Vec<Coin>,
+) -> StdResult<Response> {
+    let msg = SubMsg::<Empty>::new(WasmMsg::Execute {
+        contract_addr,
+        msg: contract_msg,
+        funds: contract_funds,
+    });
+    let callback_msg = SubMsg::<Empty>::new(WasmMsg::Execute {
+        contract_addr: callback_addr,
+        msg: callback_msg,
+        funds: callback_funds,
+    });
+    Ok(Response::default().add_submessages([msg, callback_msg]))
 }
